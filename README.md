@@ -20,11 +20,10 @@ For both experiments the following structure applies
 					/Contains EXP1/ and EXP2/ (See below)
 					/Exp_1_2_ANALYSIS.R is the code for the main analysis (presented in the results section), with some additional NHST analyses. Notes for running are documented at the top of the code 
 					/Exp_1_2_Figures.R produces figures 2 and 3 from the paper. Again, see notes at the top of the code for the guide to running 
-
-                   /EXP[1 or 2]
+					/EXP[1 or 2]
 				   			/TASK  Contains task/stimulation code. See notes at the top of the run code - e.g. cue_probs_v*.m for dependencies and instructions for running
 							EXP2 has extra .mat files - these contain variables for the predetermined counterbalancing across participants
-	    wideform_summary_data/ contains group summary data files in wideform, for RT and Accuracy respectively, so that non-R users can recreate the analyses in the paper in their own software packages
+					/wideform_summary_data/ contains group summary data files in wideform, for RT and Accuracy respectively, so that non-R users can recreate the analyses in the paper in their own software packages
 							legend:
 							.4/.6 | .2/.8 etc = cue certainty condition
 							valid | invalid   = cue validity
