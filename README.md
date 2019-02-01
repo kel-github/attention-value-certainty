@@ -15,7 +15,8 @@ You are allowed to use this data and software for free, but please acknowledge/c
 
 
 ### how to use this repository:
-For both experiments the following structure applies
+For both experiments the following structure applies:
+~~~~
 		code-analysis-and-task/
 					/Contains EXP1/ and EXP2/ (See below)
 					/Exp_1_2_ANALYSIS.R is the code for the main analysis (presented in the results section), with some additional NHST analyses. Notes for running are documented at the top of the code 
@@ -29,3 +30,4 @@ For both experiments the following structure applies
 							valid | invalid   = cue validity
 							high | low        = value of the location where the target appeared
 							static | decay (exp 2 only) = reward condition
+~~~~
