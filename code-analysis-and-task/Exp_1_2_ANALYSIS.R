@@ -19,7 +19,7 @@
 #####################################################################################
 
 rm(list=ls())
-setwd("~/ADDBIAS_REPOS") # set this to own directory
+#setwd("~/ADDBIAS_REPOS") # set this to own directory
 
 ### tried to use packrat but error with library creation. will come back to this and update
 # in the future - sorry world!
@@ -34,7 +34,8 @@ library(plyr)
 load("EXP1/ANALYSIS/EXP1_ANALYSIS_MIXDMDLS_BIAS.R")
 # NOTE: this loads the workspace that has the outputs that this code was written to 
 # produce using the dataset commented out below.
-# load("EXP1/ANALYSIS/exp3_clean_BS_fv_18_03_17.R")
+# load("EXP1/ANALYSIS/exp3_clean_BS_fv_18_03_17.R") i.e. loading the R file will load the
+# entire workspace
 
 # DATA PREP
 # ____________________________________________________________________________________________
@@ -77,6 +78,10 @@ sum.dat.all = ddply(data, .(sub, fixprob, value, valid), summarise,
                 r1 = val_num[1],
                 r2 = rel_num_comp[1])
 
+# turn data to wideform and save for Jane so she can use excel etc
+sum.dat.all.wide = reshape2::dcast(sum.dat.all, sub ~ fixprob + value + valid, value.var = "mu"  )
+write.csv(sum.dat.all.wide, file="exp1-RT-wide.csv")
+
 # PLOT AVERAGE DATA
 sum.dat.all.plot = ddply(sum.dat.all, .(fixprob, value, valid), summarise,
                          mean = mean(mu),
@@ -91,10 +96,16 @@ for (i in levels(sum.dat.err$sub)) sum.dat.err$mu[sum.dat.err$sub == i] = sum.da
 sum.dat.cis = ddply( sum.dat.err, .(value, fixprob, valid), summarise,
                      ci = (sd(mu)/sqrt(length(mu))) * ( 9/8 ) * 2.086
                      )
+
 ###### ACC
 acc.dat.all = ddply(dat, .( sub, fixprob, value, valid ), summarise, 
                 N=length(resp), 
                 acc = sum(cor_resp == resp, na.rm=T)/N)
+
+# make and save in wideform for Jane/SPSS/excel users
+acc.dat.all.wide = reshape2::dcast(acc.dat.all, sub ~ fixprob + value + valid, value.var = "acc"  )
+write.csv(acc.dat.all.wide, file="exp1-acc-wide.csv")
+
 acc.dat.sub = ddply(dat, .(sub), summarise,
                 N = length(resp),
                 acc = sum(cor_resp == resp, na.rm=T)/N)
@@ -103,14 +114,16 @@ acc.dat.plot = ddply(dat, .( fixprob, value, valid ), summarise,
                      N=length(resp), 
                      acc = sum(cor_resp == resp, na.rm=T)/N)
 acc.dat.err = acc.dat.all
+
 for (i in levels(acc.dat.err)) acc.dat.err$acc[acc.dat.err$sub == i] = acc.dat.err$acc[acc.dat.err$sub == i] - acc.dat.sub$acc[acc.dat.sub$sub == i] + acc.dat.all.gmu
 acc.dat.cis = ddply( acc.dat.err, .(value, fixprob, valid), summarise,
                      ci = (sd(acc)/sqrt(length(acc))) * ( 9/8 ) * 2.086
                     )
 
+
 # ANALYSE RT AND ACCURACY DATA
 # ______________________________________________________________________________________________________________________________________
-##### NOTE - I PLAYED AROUD WITH NHST w LINEAR MIXED MODELS. NOT REPORTED IN PAPER. JUST WANTED TO 
+##### NOTE - I PLAYED AROUD WITH NHST w LINEAR MIXED MODELS. NOT REPORTED IN PAPER, ONLY SUPPLEMENTARY. JUST WANTED TO 
 # SEE IF IT CORROBORATED THE BAYES PICTURE (IT DOES)
 sum.dat.all$info_gain = rep(xs, each = 4, times = 21)
 ### 1 = check each variable contributes
@@ -227,12 +240,12 @@ library(plyr)
 
 # EXP 2 
 # IS AN ADDITIVE OR AN INTERACTIVE MODEL BETTER TO ACCOUNT FOR DATA?
-setwd("~/ADDBIAS_REPOS") # set this to own directory
+# set to current directory
 ##### trim functions - remove RTs 2.5 standard deviations above and below the mean
 source("EXP2/ANALYSIS/trim_functions.R")
 # NOTE: this loads the workspace that has the outputs that this code was written to 
 # produce using the dataset commented out below.
-# load("EXP2/ANALYSIS/exp2_clean_BS_v1_28_02_17")
+# load("EXP2/ANALYSIS/exp2_clean_BS_v1_28_02_17") i.e. same principle as exp 1
 load("EXP2/ANALYSIS/EXP2_ANALYSIS_MIXDMDLS_BIAS.R")
 
 data = dat
@@ -268,6 +281,9 @@ sum.dat.all = ddply(data, .(sub, fixprob, value, valid, rew_cond), summarise,
                     r1 = val_num[1],
                     r2 = rel_num_comp[1])
 
+sum.dat.all.wide = reshape2::dcast(sum.dat.all, sub ~ fixprob + value + valid + rew_cond, value.var = "mu"  )
+write.csv(sum.dat.all.wide, file="exp2-RT-wide.csv")
+
 # DATA FOR PLOTTING
 sum.dat.all.plot = ddply(sum.dat.all, .(fixprob, value, valid, rew_cond), summarise,
                          mean = mean(mu),
@@ -285,6 +301,9 @@ sum.dat.cis = ddply( sum.dat.err, .(value, fixprob, valid, rew_cond), summarise,
 acc.dat.all = ddply(dat, .( sub, fixprob, value, valid, rew_cond ), summarise, 
                     N=length(resp), 
                     acc = sum(cor_resp == resp, na.rm=T)/N)
+acc.dat.all.wide = reshape2::dcast(acc.dat.all, sub ~ fixprob + value + valid + rew_cond, value.var = "acc"  )
+write.csv(acc.dat.all.wide, file="exp2-acc-wide.csv")
+
 acc.dat.sub = ddply(dat, .(sub), summarise,
                     N = length(resp),
                     acc = sum(cor_resp == resp, na.rm=T)/N)
