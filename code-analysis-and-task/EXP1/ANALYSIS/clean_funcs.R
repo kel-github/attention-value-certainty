@@ -48,7 +48,7 @@ clean.out.block.switches <- function(data,ntrials){
   summary(final.mod)
   
   # plot participant data and save breakpoint
-  plot(x, tmp$mean, pch = 19, col = wesanderson::wes_palette("FantasticFox")[5],
+  plot(x, tmp$mean, pch = 19, col = wesanderson::wes_palette("FantasticFox1")[5],
        ylab="mean RT", xlab="bin")
   curve((final.mod$coefficients[1] + final.mod$coefficients[3]) + (final.mod$coefficients[2] + final.mod$coefficients[5])*x, 
         add=T, from=1, to=brk_pnt)
