@@ -1,0 +1,193 @@
+---
+title: "Supplementary information for: Incentive value and spatial certainty combine additively to determine visual priorities"
+author: "K. Garner"
+date: "5 September 2019"
+output: 
+  html_document:
+    code_folding: show
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(ggplot2)
+library(wesanderson)
+library(cowplot)
+library(kableExtra)
+library(tidyr)
+```
+
+It is important to demonstrate that it was theoretically possible for participants to learn that an expected value combination of incentive value and spatial certainty was more advantageous than an additive combination, given the rewards that participants were exposed to in Experiment 2. Specifically, it is important to show that participants were exposed to a sufficient range of the outputs given by the reward decay function to theoretically be able to learn the function, and therefore optimise responses in order to maximise reward accrual.
+
+To test whether participants were exposed to a sufficient range of the function to infer its parameters, we randomly selected 5 participants from experiment 2, and for each, calculated the range within which we would expect 95 % of their response times to fall, for each value condition, for the decay reward condition only. Specifically, we computed the .025 and .975 quantiles of that participant's response time data for each value (high vs low) condition. 
+
+To recap, the decay function that was applied to the reward value was:
+$$R_t = R*e^{-x*t}$$         [1]  
+
+Where $R$ = reward value, $x$ = -4, and $t$ = time
+
+```{r, echo=FALSE}
+##########################################################################################
+# load the data
+##########################################################################################
+load("EXP2/ANALYSIS/EXP2_ANALYSIS_MIXDMDLS_BIAS.R")
+subs = sample(unique(sum.dat.all$sub), 5)
+decay.dat = subset( dat, sub %in% subs )
+decay.dat = decay.dat %>% filter(rew_cond == "decay" & cor_resp == resp) %>%
+            group_by( sub, rel ) %>%
+            summarise(  min = quantile(RT, .025),
+                        max = quantile(RT, .975) )
+```
+
+```{r echo=FALSE}
+########################################################################
+# define the function that will generate the reward value data 
+# generate data using an alternate function
+########################################################################
+exp.decay <- function(reward, time){
+  reward*(exp(-4*time))
+}
+lin.decay <- function( reward, time ){
+  slope = reward*.4
+  -slope*time + reward 
+}
+```
+
+```{r echo=FALSE}
+########################################################################
+# calculate reward outcomes, given functions
+########################################################################
+########################################################################
+# define parameters
+########################################################################
+t = seq(0.01, 1, .01) # time vector
+rs = c(5000, 100) # high and low reward
+
+########################################################################
+# compute reward values over time 
+########################################################################
+exp = sapply(rs, exp.decay, time = t)
+lin = sapply(rs, lin.decay, time = t)
+dat <- data.frame( time = rep(t, times = 8),
+                   reward = rep( c("high", "low"), each = length(t), times = 2),
+                   fname = rep(c("exponential", "linear"), each = 2*length(t)),
+                   pred = c(exp[,1], exp[,2], lin[,1], lin[,2]))
+
+```
+
+
+```{r, echo=FALSE, fig.height=10, fig.width=5, fig.align="center"}
+##########################################################################################
+# for each participant, show the range of their RTs over the 
+# function, and show the amount of the function they were actually exposed to
+##########################################################################################
+get.p.plots <- function( func.data, sub.data, s ){
+
+      data = sub.data %>% filter(sub == s)
+      dat = func.data
+      this.legend.title = "Value"
+      l_wd = 1.5
+      f_size=12
+      alph = 1
+
+      exp.p <- ggplot(dat[dat$fname=="exponential", ], aes(x=time, y=pred, color=reward, group=reward)) +
+                geom_line(linetype=1, lwd=l_wd, alpha=alph) +
+                ylab("Reward Value") + xlab("time") +
+                scale_color_manual(this.legend.title, values=c(wes_palette("Royal1")[2], wes_palette("Royal1")[1])) + 
+                geom_rect(data=data, mapping=aes(     xmin=min, xmax=max, ymin=rep(0, times=2), 
+                                                      ymax=rep(5000, times = 2)), alpha = 0.2, inherit.aes = FALSE) +
+                theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                text=element_text(size=f_size),
+                axis.text.x = element_text(size=f_size),
+                axis.text.y = element_text(size=f_size),
+                legend.position="none",
+                strip.background = element_blank()) 
+
+    zoom.dat = dat %>% filter(fname == "exponential" & time > min(data$min) & time < max(data$max) ) 
+    zoom.p = ggplot(zoom.dat, aes(x=time, y=pred, color=reward, group=reward)) +
+                geom_line(linetype=1, lwd=l_wd, alpha=alph) +
+                ylab("Reward Value") + xlab("time") +
+                scale_color_manual(this.legend.title, values=c(wes_palette("Royal1")[2], wes_palette("Royal1")[1])) +
+                theme(panel.border = element_blank(), panel.grid.major = element_blank(),
+                      panel.grid.minor = element_blank(), axis.line = element_line(colour = "black"),
+                      text=element_text(size=f_size),
+                      axis.text.x = element_text(size=f_size),
+                      axis.text.y = element_text(size=f_size),
+                      legend.position="none",
+                      strip.background = element_blank())
+    out = list(exp.p, zoom.p)
+    out
+}
+ps <- sapply(subs, get.p.plots, func.data = dat, sub.data = decay.dat)
+plot_grid(plotlist=ps, nrow = length(subs), labels=c("1", "", "2", "", "3", "", "4", "", "5", ""))
+# ggsave("Supp-Fig-subs-func-exposure.png", plot=last_plot(), dpi="print", width=4.5, height=7)
+```
+_Figure 1: Showing the exponential decay function over time for the 5 randomly selected subjects. The left column shows the reward value available for each value condition over 1 second, and the grey boxes show the range between the .025 and .975 RT quantiles for each subject for the high and low value conditions. The right column shows the range of the decay function that each participant was exposed to._
+
+We then asked whether it is theoretically possible for participants to recover the parameters of the function, given the range of output values that they were exposed to. For each participant, we took the output of the reward decay functions that they were exposed to, given their RTs, and added noise to each value condition $N(0, 5)$ to mimic some sampling error. For each participant we asked: using a nonlinear regression, is it possible to recover the parameters of the exponential function? 
+
+Table 1 shows the recovered parameters of the function, given each subjects exposure to it. As can be seen, it is possible to recover a reasonable estimate of the paramters (true R = 5000 or 100, dependent on the value condition, and true x = -4). 
+
+```{r, echo=FALSE }
+
+recover.params <- function(sub.data, func.data, s){
+        
+        # recreate the range of the function to which the participant was exposed
+        data = sub.data %>% filter(sub == s) 
+        dat = func.data
+        
+        zoom.dat = dat %>% filter(fname == "exponential" & time > min(decay.dat$min) & time < max(decay.dat$max) ) 
+        zoom.dat$reward_value = NA
+        zoom.dat$reward_value[zoom.dat$reward == "high"] = 5000
+        zoom.dat$reward_value[zoom.dat$reward == "low"] = 100
+        zoom.dat$pred_n = zoom.dat$pred + abs(rnorm(n=length(zoom.dat$pred), mean = 0, sd = 5)) # add some noise
+        
+        # can the sub recover the parameters of the exponential function?
+        exp.lm.fit.hi <- lm(log(pred_n) ~ time, data = zoom.dat[zoom.dat$reward == "high", ])
+        exp.hi = summary(exp.lm.fit.hi)
+        exp.hi.int = exp(exp.hi$coefficients[1,1])
+        exp.hi.sl  = exp.hi$coefficients[2,1]
+        
+        exp.lm.fit.lo <- lm(log(pred_n) ~ time, data = zoom.dat[zoom.dat$reward == "low", ])
+        exp.lo <- summary(exp.lm.fit.lo)
+        exp.lo.int = exp(exp.lo$coefficients[1,1])
+        exp.lo.sl  = exp.lo$coefficients[2,1]
+        
+        lm.fit.hi <- lm(pred ~ time, data = zoom.dat[zoom.dat$reward == "high", ])
+        ln.hi <- summary(lm.fit.hi)
+        ln.hi.int = ln.hi$coefficients[1,1]
+        ln.hi.sl  = ln.hi$coefficients[2,1]
+        
+        lm.fit.lo <- lm(pred ~ time, data = zoom.dat[zoom.dat$reward == "low", ])
+        ln.lo <- summary(lm.fit.lo)
+        ln.lo.int = ln.lo$coefficients[1,1]
+        ln.lo.sl  = ln.lo$coefficients[2,1]
+        
+        n = length(exp.hi$residuals)# number of data points
+        k = 2 # number of free parameters
+        BIC_expHi = n*log(1-exp.hi$r.squared) + k*log(n)
+        BIC_expLo = n*log(1-exp.lo$r.squared) + k*log(n)
+        BIC_lnHi = n*log(1-ln.hi$r.squared) + k*log(n)
+        BIC_lnLo = n*log(1-ln.lo$r.squared) + k*log(n)
+        
+        results = data.frame(funct = c("exp hi", "exp lo", "ln hi", "ln low"),
+                             R = c(exp.hi.int, exp.lo.int, ln.hi.int, ln.lo.int),
+                             x = c(exp.hi.sl, exp.lo.sl, ln.hi.sl, ln.lo.sl),
+                             BIC = c(BIC_expHi, BIC_expLo, BIC_lnHi, BIC_lnLo))
+}
+fits <- lapply(subs, recover.params, func.data = dat, sub.data = decay.dat)
+fit.dat <- do.call(rbind, fits)
+```
+
+```{r, echo=FALSE}
+
+# first plot the slope and beta obtained for each subject for the exponential function
+param.data <- fit.dat[fit.dat$funct == "exp hi" | fit.dat$funct == "exp lo", c("funct", "x", "R")] 
+param.data$sub = rep(c(1:5), each = 2)
+param.data %>% kable(row.names=F) %>% kable_styling(font_size = 14, full_width = TRUE) %>% row_spec(1:10, bold=TRUE) 
+
+```
+_Table 1. Showing the parameters derived for the exponential decay function, given the range of reward values each participant was exposed to. exp hi = exponential for high reward values, exp lo = exponential function for low reward values. R = reward, from equation 1, true x = -4, from equation 1_
+
+We have shown that given a participants experience of the range of reward values, it is possible to obtain a reasonable estimate of the function controlling the decay of the reward value that is available over time. Therefore it is theoretically possible for this decay function to modulate behaviour in Experiment 2.
