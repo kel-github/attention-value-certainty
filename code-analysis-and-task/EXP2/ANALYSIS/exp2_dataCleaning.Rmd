@@ -1,19 +1,22 @@
 ---
 title: "exp 2 data cleaning"
 author: "K.G.Garner"
-output: html_document
+output: 
+  pdf_document: default
+  html_document: default
 ---
 
-__this code__ 
-  + loads the raw data - assigns factors to variables etc, load functions
-  + conducts piecewise linear functions to the data (collapsed over blocks)
-  + removes trials up to the breakpoint
-  + saves data as a dataframe
+# this code 
+
+### loads the raw data - assigns factors to variables etc, load functions
+### conducts piecewise linear functions to the data (collapsed over blocks)
+### removes trials up to the breakpoint
+### saves data as a dataframe
 
 
-```{r global_options, eval = TRUE, echo=TRUE}
-knitr::opts_chunk$set(fig.width = 6, fig.height = 6, 
-                      echo = TRUE, highlight = TRUE,
+```{r global_options, eval = TRUE, echo=FALSE}
+knitr::opts_chunk$set(fig.width = 4, fig.height = 3, 
+                      echo = FALSE, highlight = TRUE,
                       root.dir = "~/Dropbox/BHAMPROJECTS/RelValue_StudyProgramme/PROJECT_REPOSITORIES/ADDBIAS_REPOS/EXP2/ANALYSIS")
 ```
 
@@ -28,158 +31,144 @@ rows$sub = levels(dat$sub) # start dataframe for row numbers
 ```
 
 
-__block switches__
-as learning should be demonstrated by a speeding of RTs over the block, now going to plot the change in RTs (collapsed across conditions) after each block switch, and apply piecewise linear regression method to remove trials contaminated by the switch (i.e. remove trials occurring prior to the breakpoint)
-__note:__ as some participants have more trials than others the number of trials included in the regression were titrated for each subject by starting with N = 200 and reducing by 5 until a solution was found
+# block switches
 
-##### sub 501
-```{r clean_switching_data_501, warning = FALSE, eval = TRUE, echo = TRUE}
+As learning should be demonstrated by a speeding of RTs over the block, I am now going to plot the RTs by trial number (collapsed across all blocks and conditions conditions) after each block switch, and apply piecewise linear regression method to remove trials contaminated by the switch (i.e. remove trials occurring prior to the breakpoint).
+
+
+```{r clean_switching_data_501, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-501'}
 switch.rows = array()
 switch.rows$sub = levels(dat$sub)
 
 switch.rows$num[switch.rows$sub == "501"] = clean.out.block.switches(dat[dat$sub == "501",], 200)
 ```
 
-##### sub 502
-```{r clean_switching_data_502, warning = FALSE, eval = TRUE, echo = TRUE}
+
+```{r clean_switching_data_502, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-502'}
 switch.rows$num[switch.rows$sub == "502"] = clean.out.block.switches(dat[dat$sub == "502",], 200)
 ```
-##### sub 503
-```{r clean_switching_data_503, warning = FALSE, eval = TRUE, echo = TRUE}
+
+```{r clean_switching_data_503, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-503'}
 switch.rows$num[switch.rows$sub == "503"] = clean.out.block.switches(dat[dat$sub == "503",], 200)
 ```
-##### sub 504
-```{r clean_switching_data_504, warning = FALSE, eval = TRUE, echo = TRUE}
+
+```{r clean_switching_data_504, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-504'}
 switch.rows$num[switch.rows$sub == "504"] = clean.out.block.switches(dat[dat$sub == "504",], 200)
 ```
-##### sub 505
-```{r clean_switching_data_505, warning = FALSE, eval = TRUE, echo = TRUE}
+
+```{r clean_switching_data_505, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-505'}
 switch.rows$num[switch.rows$sub == "505"] = clean.out.block.switches(dat[dat$sub == "505",], 180)
 ```
 
-##### sub 506
-```{r clean_switching_data_506, warning = FALSE, eval = TRUE, echo = TRUE}
+
+```{r clean_switching_data_506, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-506'}
 switch.rows$num[switch.rows$sub == "506"] = clean.out.block.switches(dat[dat$sub == "506",],170)
 ```
 
-##### sub 507
-```{r clean_switching_data_507, warning = FALSE, eval = TRUE, echo = TRUE}
+
+```{r clean_switching_data_507, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-507'}
 switch.rows$num[switch.rows$sub == "507"] = clean.out.block.switches(dat[dat$sub == "507",],180)
 ```
 
-##### sub 508
-```{r clean_switching_data_508, warning = FALSE, eval = TRUE, echo = TRUE}
+
+```{r clean_switching_data_508, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-508'}
 switch.rows$num[switch.rows$sub == "508"] = clean.out.block.switches(dat[dat$sub == "508",], 180)
 ```
-##### sub 509
-```{r clean_switching_data_509, warning = FALSE, eval = TRUE, echo = TRUE}
+
+```{r clean_switching_data_509, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-509'}
 switch.rows$num[switch.rows$sub == "509"] = clean.out.block.switches(dat[dat$sub == "509",],190)
 ```
 
 
-##### sub 510
-```{r clean_switching_data_510, warning = FALSE, eval = TRUE, echo = TRUE}
+```{r clean_switching_data_510, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-510'}
 switch.rows$num[switch.rows$sub == "510"] = clean.out.block.switches(dat[dat$sub == "510",], 140)
 ```
 
-##### sub 511
-```{r clean_switching_data_511, warning = FALSE, eval = TRUE, echo = TRUE}
+```{r clean_switching_data_511, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-511'}
 switch.rows$num[switch.rows$sub == "511"] = clean.out.block.switches(dat[dat$sub == "511",], 200)
 ```
 
-##### sub 512
-```{r clean_switching_data_512,  warning = FALSE, eval = TRUE, echo = TRUE}
+
+```{r clean_switching_data_512,  warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-512'}
 switch.rows$num[switch.rows$sub == "512"] = clean.out.block.switches(dat[dat$sub == "512",], 200)
 ```
 
-##### sub 513
-```{r clean_switching_data_513, warning = FALSE, eval = TRUE, echo = TRUE}
+
+```{r clean_switching_data_513, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-513'}
 switch.rows$num[switch.rows$sub == "513"] = clean.out.block.switches(dat[dat$sub == "513",], 190)
 ```
 
 
-##### sub 514
-```{r clean_switching_data_514, warning = FALSE, eval = TRUE, echo = TRUE}
+```{r clean_switching_data_514, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-514'}
 switch.rows$num[switch.rows$sub == "514"] = clean.out.block.switches(dat[dat$sub == "514",], 180)
 ```
 
-##### sub 515
-```{r clean_switching_data_515, warning = FALSE, eval = TRUE, echo = TRUE}
+```{r clean_switching_data_515, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-515'}
 switch.rows$num[switch.rows$sub == "515"] = clean.out.block.switches(dat[dat$sub == "515",], 180)
 
 ```
 
 
-##### sub 516
-```{r clean_switching_data_516, warning = FALSE, eval = TRUE, echo = TRUE}
+```{r clean_switching_data_516, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-516'}
 switch.rows$num[switch.rows$sub == "516"] = clean.out.block.switches(dat[dat$sub == "516",], 180)
 
 ```
 
-##### sub 517
-```{r clean_switching_data_517, warning = FALSE, eval = TRUE, echo = TRUE}
+```{r clean_switching_data_517, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-517'}
 switch.rows$num[switch.rows$sub == "517"] = clean.out.block.switches(dat[dat$sub == "517",], 200)
 
 ```
 
-##### sub 518
-```{r clean_switching_data_518, warning = FALSE, eval = TRUE, echo = TRUE}
+```{r clean_switching_data_518, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-518'}
 switch.rows$num[switch.rows$sub == "518"] = clean.out.block.switches(dat[dat$sub == "518",], 130)
 
 ```
 
-##### sub 519
-```{r clean_switching_data_519, warning = FALSE, eval = TRUE, echo = TRUE}
+```{r clean_switching_data_519, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-519'}
 switch.rows$num[switch.rows$sub == "519"] = clean.out.block.switches(dat[dat$sub == "519",], 200)
 
 ```
 
-##### sub 520
-```{r clean_switching_data_520, warning = FALSE, eval = TRUE, echo = TRUE}
+```{r clean_switching_data_520, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-520'}
 switch.rows$num[switch.rows$sub == "520"] = clean.out.block.switches(dat[dat$sub == "520",], 180)
 
 ```
 
-##### sub 521
-```{r clean_switching_data_521, warning = FALSE, eval = TRUE, echo = TRUE}
+```{r clean_switching_data_521, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-521'}
 switch.rows$num[switch.rows$sub == "521"] = clean.out.block.switches(dat[dat$sub == "521",], 200)
 
 ```
 
-##### sub 522
-```{r clean_switching_data_522, warning = FALSE, eval = TRUE, echo = TRUE}
+```{r clean_switching_data_522, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-522'}
 switch.rows$num[switch.rows$sub == "522"] = clean.out.block.switches(dat[dat$sub == "522",], 200)
 
 ```
 
-##### sub 523
-```{r clean_switching_data_523, warning = FALSE, eval = TRUE, echo = TRUE}
+```{r clean_switching_data_523, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-523'}
 switch.rows$num[switch.rows$sub == "523"] = clean.out.block.switches(dat[dat$sub == "523",], 200)
 
 ```
 
-##### sub 524
-```{r clean_switching_data_524, warning = FALSE, eval = TRUE, echo = TRUE}
+```{r clean_switching_data_524, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-524'}
 switch.rows$num[switch.rows$sub == "524"] = clean.out.block.switches(dat[dat$sub == "524",], 200)
 
 ```
 
-##### sub 525
-```{r clean_switching_data_525, warning = FALSE, eval = TRUE, echo = TRUE}
+```{r clean_switching_data_525, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-525'}
 switch.rows$num[switch.rows$sub == "525"] = clean.out.block.switches(dat[dat$sub == "525",], 200)
 
 ```
 
-##### sub 526
-```{r clean_switching_data_526, warning = FALSE, eval = TRUE, echo = TRUE}
+```{r clean_switching_data_526, warning = FALSE, eval = TRUE, echo = FALSE, fig.cap='sub-526'}
 switch.rows$num[switch.rows$sub == "526"] = clean.out.block.switches(dat[dat$sub == "526",], 200)
 
 ```
 
-__remove trials occurring prior to the break point__
-```{r rem_post_switch, eval = TRUE, echo = TRUE}
+
+```{r rem_post_switch, eval = TRUE, echo = FALSE}
 rem.post.switch <- function(data, rows){
   
+  # __remove trials occurring prior to the break point__
     n_row = rows$num[rows$sub == data$sub[1]]
     trials = length(data$sub)
     mark.trials = array(data=0, dim=trials)
@@ -200,7 +189,6 @@ rm(tmp)
 ```
 
 
-__save data for analysis__ 
-```{r save_dat, warning = FALSE, echo = TRUE, eval = FALSE}
+```{r save_dat, warning = FALSE, echo = FALSE, eval = FALSE}
 # save.image("exp2_clean_BS_v1_28_02_17.R")
 ```
